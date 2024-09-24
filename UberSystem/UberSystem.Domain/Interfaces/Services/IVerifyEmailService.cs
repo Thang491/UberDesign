@@ -11,6 +11,6 @@ namespace UberSystem.Domain.Interfaces.Services
     public interface IVerifyEmailService
     {
         Task SendVerificationEmailAsync(string email, string VerifyCode);
-        Task VerifyEmail(EmailVerifyModel model);
+       // Task VerifyEmail(EmailVerifyModel model);
     }
 }

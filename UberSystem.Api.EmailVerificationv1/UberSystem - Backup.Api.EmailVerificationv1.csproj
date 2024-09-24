@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.20" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UberSystem\UberSystem.Api\UberSystem.Api.csproj" />
+    <ProjectReference Include="..\UberSystem\UberSystem.Domain\UberSystem.Domain.csproj" />
+    <ProjectReference Include="..\UberSystem\UberSystem.Infrastructure\UberSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\UberSystem\UberSystem.Service\UberSystem.Service.csproj" />
+    <ProjectReference Include="..\UberSystem\UberSytem.Dto\UberSytem.Dto.csproj" />
+  </ItemGroup>
+
+</Project>
