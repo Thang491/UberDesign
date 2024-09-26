@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using UberSystem.Domain.Entities;
 //using UberSystem.Domain.Entities;
 using UberSytem.Dto.Requests;
 using UberSytem.Dto.Responses;
@@ -10,7 +11,7 @@ namespace UberSytem.Dto
         /// <summary>
         /// Mapping
         /// </summary>
-       /* public MappingProfileExtension()
+        public MappingProfileExtension()
         {
             CreateMap<User, Customer>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
@@ -21,6 +22,6 @@ namespace UberSytem.Dto
 
             CreateMap<User, UserResponseModel>();
             CreateMap<SignupModel, User>();
-        }*/
+        }
     }
 }

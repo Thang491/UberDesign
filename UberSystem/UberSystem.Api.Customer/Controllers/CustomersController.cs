@@ -61,34 +61,35 @@ namespace UberSystem.Api.Customer.Controllers
 
         // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCustomer(long id, Domain.Entities.Customer customer)
-        //{
-        //    if (id != customer.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCustomer(long id)
+        {
 
-        //    _context.Entry(customer).State = EntityState.Modified;
+            /*if (id != customer.Id)
+            {
+               return BadRequest();
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CustomerExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            _context.Entry(customer).State = EntityState.Modified;*/
 
-        //    return NoContent();
-        //}
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {/*
+                if (!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }*/
+            }
+
+            return NoContent();
+        }
 
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

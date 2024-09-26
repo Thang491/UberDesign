@@ -16,12 +16,14 @@ namespace UberSystem.Api.Authentication.Controllers
     {
         private readonly IUserService _userService;
         private readonly TokenService _tokenService;
+        private readonly IVerifyEmailService _verifyEmailService;
         private readonly IMapper _mapper;
 
-        public AuthController(IUserService userService, TokenService tokenService, IMapper mapper)
+        public AuthController(IUserService userService, IVerifyEmailService verifyEmailService , TokenService tokenService, IMapper mapper)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _verifyEmailService = verifyEmailService;
             _mapper = mapper;
         }
 
@@ -77,7 +79,10 @@ namespace UberSystem.Api.Authentication.Controllers
                     Message = "Invalid role's value in the system!"
                 });
             var user = _mapper.Map<User>(request);
+            var verifyMail = new EmailVerification();
+            verifyMail.UserId = request.Id;
             await _userService.Add(user);
+            await _verifyEmailService.Add(verifyMail);
             return Ok(new ApiResponseModel<string>
             {
                 StatusCode = HttpStatusCode.OK,

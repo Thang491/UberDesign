@@ -11,6 +11,7 @@ public partial class User
     public string Email { get; set; } = null!;
 
     public string? Password { get; set; }
+    public bool IsEmailConfirmed { get; set; }
     public virtual ICollection<EmailVerification> EmailVerifications { get; set; }
 
 

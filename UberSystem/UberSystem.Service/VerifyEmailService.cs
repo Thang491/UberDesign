@@ -12,6 +12,7 @@ using UberSystem.Domain.Enums;
 using UberSystem.Domain.Interfaces;
 using UberSystem.Domain.Interfaces.Services;
 using UberSytem.Dto.Requests;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace UberSystem.Service
 {
@@ -37,20 +38,22 @@ namespace UberSystem.Service
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-        public async Task SendVerificationEmailAsync(string toEmail, string verificationCode)
+        public async Task<bool> SendVerificationEmailAsync(string toEmail)
         {
             var emailService = new VerifyEmailService();
             var subject = "Your Verification Code";
-            var verificationCode1 = GenerateVerificationCode();
+            var verificationCode = GenerateVerificationCode();
             if (verificationCode != null)
             {
-                var emailveryfy = await FindUserIdByEmail(toEmail,verificationCode1);
+                var emailveryfy = await FindUserIdByEmail(toEmail,verificationCode);
                 await _unitOfWork.Repository<EmailVerification>().UpdateAsync(emailveryfy);
 
-                var body = $"Your verification code is: {verificationCode1}";
+                var body = $"Your verification code is: {verificationCode}";
 
                 await emailService.SendEmailAsync(toEmail, subject, body);
+                return true;
             }
+            return false;
            
         }
         public async Task<EmailVerification> FindUserIdByEmail(string email,string code)
@@ -63,8 +66,9 @@ namespace UberSystem.Service
                     var User = ListUser.FirstOrDefault(x => x.Email == email);
                     if (User != null)
                     {
-                        var a = await _unitOfWork.Repository<EmailVerification>().FindAsync(User.Id);
-                        a.ExpiryTime = DateTime.UtcNow;
+                        var listEmail = await _unitOfWork.Repository<EmailVerification>().GetAllAsync();
+                        var a = listEmail.FirstOrDefault(x => x.UserId == User.Id);
+                        a.ExpiryTime = DateTime.Now.AddMinutes(10) ;
                         a.Code = code;
                         await _unitOfWork.Repository<EmailVerification>().UpdateAsync(a);
                         return a;
@@ -80,7 +84,36 @@ namespace UberSystem.Service
            
                    
         }
-        public async Task<User> FindEmailVerifiByEmail(string email)
+        public async Task Add(EmailVerification email)
+        {
+            try
+            {
+                var emailVerifyRepository = _unitOfWork.Repository<EmailVerification>();
+
+                var userRepository = _unitOfWork.Repository<User>();
+                var customerRepository = _unitOfWork.Repository<Customer>();
+                var driverRepository = _unitOfWork.Repository<Driver>();
+                if (email is not null)
+                {
+                    await _unitOfWork.BeginTransaction();
+                    // check duplicate user
+                    var existedEmail = await emailVerifyRepository.GetAsync(u => u.UserId == email.UserId);
+                    if (existedEmail is not null) throw new Exception("UserId already exists.");
+
+                    await emailVerifyRepository.InsertAsync(email);
+
+
+                    await _unitOfWork.CommitTransaction();
+                }
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransaction();
+                throw;
+            }
+
+        }
+            public async Task<User> FindEmailVerifiByEmail(string email)
         {
             return await _unitOfWork.Repository<User>().FindAsync(email);
         }
@@ -104,9 +137,29 @@ namespace UberSystem.Service
                 await client.DisconnectAsync(true);
             }
         }
-       /* public Task VerifyEmail(EmailVerifyModel model)
+        public async Task<bool> VerifyEmail(string Email,string code)
         {
-            return null;
-        }*/
+            var ListUser = await _unitOfWork.Repository<User>().GetAllAsync();
+            if (ListUser != null)
+            {
+                var User =  ListUser.FirstOrDefault(x => x.Email == Email);
+                if (User != null)
+                {
+                    var listEmail = await _unitOfWork.Repository<EmailVerification>().GetAllAsync();
+                    var Emailverify =  listEmail.FirstOrDefault(x => x.UserId == User.Id);
+                    if(Emailverify.Code == code && Emailverify.ExpiryTime >= DateTime.Now)
+                    {
+                        User.IsEmailConfirmed = true;
+                        await _unitOfWork.Repository<User>().UpdateAsync(User);
+                        return true;
+                    }
+                    return false;
+
+                }
+                return false;               
+            }
+            return false;
+
+        }
     }
 }
