@@ -7,7 +7,7 @@ using UberSystem.Infrastructure;
 using UberSystem.Service;
 using UberSytem.Dto;
 
-namespace UberSystem.Api.Customer.Extensions
+namespace UberSystem.Api.Driverv1.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -33,7 +33,6 @@ namespace UberSystem.Api.Customer.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDriverService, DriverService>();
-            services.AddScoped<DriverLocationService>();
             services.AddAutoMapper(typeof(MappingProfileExtension));
             return services;
         }

@@ -1,13 +1,68 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.OpenApi.Models;
+using System.Reflection;
+using UberSystem.Api.Driverv1.Extensions;
+using UberSystem.Domain.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using UberSystem.Service;
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "NTF API",
+        Description = "An ASP.NET Core Web API for managing integrated items",
+        TermsOfService = new Uri("https://lms-hcmuni.fpt.edu.vn/course/view.php?id=2110"),
+        Contact = new OpenApiContact
+        {
+            Name = "Contact",
+            Url = new Uri("https://lms-hcmuni.fpt.edu.vn/course/view.php?id=2110")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "License",
+            Url = new Uri("https://lms-hcmuni.fpt.edu.vn/course/view.php?id=2110")
+        }
+    });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+    {
+        new OpenApiSecurityScheme {
+            Reference = new OpenApiReference {
+                Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+            }
+        },
+        new string[] {}
+    }
+    });
+    var xfile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xpath = Path.Combine(AppContext.BaseDirectory, xfile);
+    options.IncludeXmlComments(xpath);
+});
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+var connectionString = builder.Configuration.GetConnectionString("Default");
+//DI services
+builder.Services.AddDatabase(connectionString).AddServices();
+//builder.Services.AddHostedService<DriverLocationService>();
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

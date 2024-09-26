@@ -7,12 +7,7 @@
             // Create an instance of Random
             Random random = new Random();
 
-            // Use two int values to construct a long value
-            byte[] buffer = new byte[8];
-            random.NextBytes(buffer);
-
-            // Convert the byte array to a long
-            long randomLong = BitConverter.ToInt64(buffer, 0);
+            long randomLong = random.Next(10000000, 100000000);
 
             return randomLong;
         }

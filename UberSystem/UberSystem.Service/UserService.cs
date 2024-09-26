@@ -25,9 +25,12 @@ namespace UberSystem.Service
                 var driverRepository = _unitOfWork.Repository<Driver>();
                 if (user is not null)
                 {
+                   
                     await _unitOfWork.BeginTransaction();
                     // check duplicate user
-                    var existedUser = await userRepository.GetAsync(u => u.Id == user.Id && u.Email == user.Email);
+                    var existedUser = await userRepository.GetAsync(u => u.Id == user.Id || u.Email == user.Email);
+                    var existedEmail = await userRepository.GetAsync(u => u.Email == user.Email);
+                    if (existedEmail is not null) throw new Exception("Email already exists.");
                     if (existedUser is not null) throw new Exception("User already exists.");
 
                     await userRepository.InsertAsync(user);

@@ -22,6 +22,10 @@ namespace UberSytem.Dto
 
             CreateMap<User, UserResponseModel>();
             CreateMap<SignupModel, User>();
+             //CreateMap<Driver, DriverReponseModel>();
+            CreateMap<DriverReponseModel, Driver>();
+            CreateMap<CustomerRatingReponseModel, Rating>();
+
         }
     }
 }
