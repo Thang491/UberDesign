@@ -33,6 +33,7 @@ namespace UberSystem.Api.Driverv1.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDriverService, DriverService>();
+            services.AddScoped<DriverLocationService>();
             services.AddAutoMapper(typeof(MappingProfileExtension));
             return services;
         }

@@ -227,6 +227,13 @@ namespace UberSystem.Api.Customer.Controllers
             }
 
         }
+        /// <summary>
+        ///  Customers order trip in system
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// 
+        /// </remarks>
         [HttpPost("orderTrip")]
         public async Task<IActionResult> OrderTrip([FromBody] TripRequestModel tripRequest)
         {
@@ -246,9 +253,11 @@ namespace UberSystem.Api.Customer.Controllers
 
             if (acceptedDriver != null)
             {
+                Random random = new Random();
                 // Tạo đối tượng chuyến đi
                 var trip = new Trip
                 {
+                    Id = random.Next(1000,10000),
                     CustomerId = tripRequest.CustomerId, // Giả định bạn có CustomerId trong request
                     DriverId = acceptedDriver.Id,
                     SourceLatitude = tripRequest.PickupLatitude,
@@ -260,8 +269,6 @@ namespace UberSystem.Api.Customer.Controllers
 
                 // Lưu chuyến đi vào cơ sở dữ liệu
                 await _context.Trips.AddAsync(trip); // Giả định bạn có service để tạo chuyến đi
-
-
                 if (trip.Status == "cho khach" || trip.Status == "Dang thuc hien nhiem vu")
                 {
                     if (!_locationService.IsRunning)
