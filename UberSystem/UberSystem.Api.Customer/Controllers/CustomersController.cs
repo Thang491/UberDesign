@@ -229,6 +229,13 @@ namespace UberSystem.Api.Customer.Controllers
             }
 
         }
+        /// <summary>
+        ///  Customers order trip in system
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// 
+        /// </remarks>
         [HttpPost("orderTrip")]
         public async Task<IActionResult> OrderTrip([FromBody] TripRequestModel tripRequest)
         {
@@ -248,6 +255,7 @@ namespace UberSystem.Api.Customer.Controllers
 
             if (acceptedDriver != null)
             {
+                Random random = new Random();
                 // Tạo đối tượng chuyến đi
                 Random rd = new Random();
                 var trip = new Trip

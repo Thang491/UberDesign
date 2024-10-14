@@ -194,7 +194,13 @@ namespace UberSystem.Api.Driverv1.Controllers
             return (_context.Customers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-
+        /// <summary>
+        /// Update Status Driver in system
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// 
+        /// </remarks>
         [HttpPost("updateStatus/{id}")]
         public async Task<IActionResult> UpdateDriverStatus(long id ,string status)
         {
