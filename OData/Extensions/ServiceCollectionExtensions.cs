@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using UberSystem.Domain.Interfaces;
 using UberSystem.Domain.Interfaces.Services;
+using UberSystem.Domain.Interfaces;
 using UberSystem.Infrastructure;
 using UberSystem.Service;
-using UberSytem.Dto;
 
-namespace UberSystem.Api.Driverv1.Extensions
+namespace OData.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+
         /// <summary>
         /// Add needed instances for database
         /// </summary>
@@ -31,11 +29,7 @@ namespace UberSystem.Api.Driverv1.Extensions
             services.AddScoped<Func<UberSystemDbContext>>((provider) => () => provider.GetService<UberSystemDbContext>());
             services.AddScoped<DbFactory>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IDriverService, DriverService>();
-            services.AddScoped<DriverLocationService>();
 
-            services.AddAutoMapper(typeof(MappingProfileExtension));
             return services;
         }
 

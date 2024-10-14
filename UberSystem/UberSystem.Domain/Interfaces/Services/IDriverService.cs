@@ -15,6 +15,10 @@ namespace UberSystem.Domain.Interfaces.Services
         Task Delete(Driver driver);
         Task<Driver> findDriverbyId(long id);
         Task<IEnumerable<Driver>> GetDrivers();
-        Task<List<Driver>> GetAvailableDriversAsync(double pickupLatitude, double pickupLongitude, double radiusInKm);
+        Task<IQueryable<Driver>> GetAvailableDriversAsync(double pickupLatitude, double pickupLongitude, double radiusInKm);
+        Task<IQueryable<Trip>> getInforOrderUber(long id);
+        Task<IQueryable<Trip>> getInforTrip(long id);
+
+        
     }
 }

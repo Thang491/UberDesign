@@ -8,10 +8,11 @@ using UberSystem.Service;
 using UberSytem.Dto;
 using UberSytem.Dto.Responses;
 using UberSystem.Domain.Entities;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace UberSystem.Api.Driverv1.Controllers
 {
-    public class DriverController : BaseApiController
+    public class DriverController : ODataController
     {
         private readonly UberSystemDbContext _context;
         private readonly IDriverService _driverService;
@@ -216,6 +217,13 @@ namespace UberSystem.Api.Driverv1.Controllers
             }
 
             return Ok(new { message = "Driver status updated" });
+        }
+
+        [HttpGet("inforTrip")]
+        public async Task<IQueryable<Trip>> inforOrderTrips([FromQuery] long id)
+        {
+            var drivers = await _driverService.getInforTrip(id);
+            return drivers.AsQueryable();
         }
     }
 }

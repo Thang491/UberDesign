@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -14,7 +16,7 @@ using UberSytem.Dto.Responses;
 
 namespace UberSystem.Api.Customer.Controllers
 {
-    public class CustomersController : BaseApiController
+    public class CustomersController : ODataController
     {
         private readonly UberSystemDbContext _context;
         private readonly IUserService _userService;
@@ -247,8 +249,10 @@ namespace UberSystem.Api.Customer.Controllers
             if (acceptedDriver != null)
             {
                 // Tạo đối tượng chuyến đi
+                Random rd = new Random();
                 var trip = new Trip
                 {
+                    Id = rd.Next(1,10000),
                     CustomerId = tripRequest.CustomerId, // Giả định bạn có CustomerId trong request
                     DriverId = acceptedDriver.Id,
                     SourceLatitude = tripRequest.PickupLatitude,
@@ -260,6 +264,7 @@ namespace UberSystem.Api.Customer.Controllers
 
                 // Lưu chuyến đi vào cơ sở dữ liệu
                 await _context.Trips.AddAsync(trip); // Giả định bạn có service để tạo chuyến đi
+                await _context.SaveChangesAsync();
 
 
                 if (trip.Status == "cho khach" || trip.Status == "Dang thuc hien nhiem vu")
@@ -290,9 +295,21 @@ namespace UberSystem.Api.Customer.Controllers
            
         }
 
-        
+        [Authorize(Roles = "Customer")]
+        [HttpGet("DriversInRange")]
+        public async Task<IQueryable<Driver>> GetAvailableDrivers([FromQuery] double latitude, [FromQuery] double longitude, [FromQuery] double radius = 2)
+        {
+            var drivers = await _driverService.GetAvailableDriversAsync(latitude, longitude, radius);
+            return drivers.AsQueryable();
+        }
 
-       
+        [HttpGet("inforOrderTrip")]
+        public async Task<IQueryable<Trip>> inforOrderTrips([FromQuery] long id)
+        {
+            var drivers = await _driverService.getInforOrderUber(id);
+            return drivers.AsQueryable();
+        }
+
 
         private bool CustomerExists(long id)
         {

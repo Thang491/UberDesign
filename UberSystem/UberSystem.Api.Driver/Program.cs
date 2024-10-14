@@ -5,10 +5,25 @@ using UberSystem.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UberSystem.Service;
+using UberSystem.Domain.Entities;
+using Microsoft.AspNetCore.OData;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
+    options.AddRouteComponents("odata", GetEdmModel());
+}); ;
+static IEdmModel GetEdmModel()
+{
+    var builder = new ODataConventionModelBuilder();
+    builder.EntitySet<Driver>("Drivers");
+    builder.EntitySet<Trip>("Trips");
+    return builder.GetEdmModel();
+}
 builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(options =>

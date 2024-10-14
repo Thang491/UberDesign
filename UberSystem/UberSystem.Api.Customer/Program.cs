@@ -1,6 +1,10 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.OData;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using UberSystem.Api.Customer.Extensions;
+using UberSystem.Domain.Entities;
 using UberSystem.Domain.Interfaces.Services;
 using UberSystem.Domain.Models;
 using UberSystem.Service;
@@ -8,7 +12,18 @@ using UberSystem.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(options =>
+{
+    options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
+    options.AddRouteComponents("odata", GetEdmModel());
+}); ;
+ static IEdmModel GetEdmModel()
+{
+    var builder = new ODataConventionModelBuilder();
+    builder.EntitySet<Driver>("Drivers");
+    builder.EntitySet<Trip>("Trips");
+    return builder.GetEdmModel();
+}
 builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(options =>
